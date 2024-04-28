@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1714227255 source:c:\users\86178\desktop\parallel\simd\tmp\main.cpp
+	<iostream>
+	<windows.h>
+	<pmmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<smmintrin.h>
+	<tmmintrin.h>
+	<nmmintrin.h>
+	<immintrin.h>
+

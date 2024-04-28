@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1714309925 source:c:\users\86178\desktop\parallel\simd\special_gauss\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<cmath>
+	<bitset>
+	<nmmintrin.h>
+	<immintrin.h>
+	<windows.h>
+	<pmmintrin.h>
+	<xmmintrin.h>
+	<emmintrin.h>
+	<smmintrin.h>
+	<tmmintrin.h>
+
