@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1716015717 source:c:\users\86178\desktop\parallel\para_code\openmp\main.cpp
+	<iostream>
+	<Windows.h>
+	<omp.h>
+	<nmmintrin.h>
+	<immintrin.h>
+

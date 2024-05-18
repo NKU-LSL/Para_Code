@@ -35,7 +35,11 @@
 			<Add option="-march=native" />
 			<Add option="-march=corei7" />
 			<Add option="-march=corei7-avx" />
+			<Add option="-fopenmp" />
 		</Compiler>
+		<Linker>
+			<Add option="-fopenmp" />
+		</Linker>
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
