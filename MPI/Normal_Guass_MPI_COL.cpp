@@ -393,8 +393,6 @@ int main()
 {
     MPI_Init(NULL, NULL);
     int rank, size;
-
-    // 获取进程的秩和总的进程数
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     int epoch = 10;
