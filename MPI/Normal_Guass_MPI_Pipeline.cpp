@@ -78,9 +78,8 @@ void LU_loop(int rank, int size)
             for (int j = k + 1; j < N; j++)
                 A[k][j] = A[k][j] / A[k][k];
             A[k][k] = 1.0;
-            for (int j = 0; j < size; j++)
-                if (j != rank)
-                    MPI_Send(&A[k], N, MPI_FLOAT, next_rank, 2, MPI_COMM_WORLD);
+            if (rank != size - 1)
+                MPI_Send(&A[k], N, MPI_FLOAT, next_rank, 2, MPI_COMM_WORLD);
         }
         else
         {
@@ -100,7 +99,7 @@ void LU_loop(int rank, int size)
         }
     }
 }
-void Main_loop ()
+void Main_loop()
 {
     int size, rank;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -108,41 +107,27 @@ void Main_loop ()
     int block = N / size, remain = N % size;
     if (rank == 0)
     {
-        for (int i = 1; i < size; i++)
+        for (int i = 0; i < size; i++)
         {
-            if (i != size - 1)
-                for (int j = 0; j < block; j++)
-                    MPI_Send(&A[i * block + j], N, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
-            else
-                for (int j = 0; j < block + remain; j++)
-                    MPI_Send(&A[i * block + j], N, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
+            int tmp = i % size;
+            if (tmp != rank)
+                MPI_Send(&A[i], N, MPI_FLOAT, tmp, 0, MPI_COMM_WORLD);
         }
         LU_loop(rank, size);
         for (int i = 1; i < size; i++)
         {
-            if (i != size - 1)
-                for (int j = 0; j < block; j++)
-                    MPI_Recv(&A[i * block + j], N, MPI_FLOAT, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            else
-                for (int j = 0; j < block + remain; j++)
-                    MPI_Recv(&A[i * block + j], N, MPI_FLOAT, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            int tmp = i % size;
+            if (tmp != rank)
+                MPI_Recv(&A[i], N, MPI_FLOAT, tmp, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
     }
     else
     {
-        if (rank != size - 1)
-            for (int j = 0; j < block; j++)
-                MPI_Recv(&A[rank * block + j], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        else
-            for (int j = 0; j < block + remain; j++)
-                MPI_Recv(&A[rank * block + j], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        for (int i = rank; i < N; i += size)
+            MPI_Recv(&A[i], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         LU_loop(rank, size);
-        if (rank != size - 1)
-            for (int j = 0; j < block; j++)
-                MPI_Send(&A[rank * block + j], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
-        else
-            for (int j = 0; j < block + remain; j++)
-                MPI_Send(&A[rank * block + j], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
+        for (int i = rank; i < N; i += size)
+            MPI_Send(&A[i], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
     }
 }
 void LU_loop_OpenMP(int rank, int size)
@@ -172,9 +157,8 @@ void LU_loop_OpenMP(int rank, int size)
             for (; j < N; j++)
                 A[k][j] = A[k][j] / A[k][k];
             A[k][k] = 1.0;
-            for (int j = 0; j < size; j++)
-                if (j != rank)
-                    MPI_Send(&A[k], N, MPI_FLOAT, next_rank, 2, MPI_COMM_WORLD);
+            if (rank != size - 1)
+                MPI_Send(&A[k], N, MPI_FLOAT, next_rank, 2, MPI_COMM_WORLD);
         }
         else
         {
@@ -215,41 +199,32 @@ void Main_loop_OpenMP()
     int block = N / size, remain = N % size;
     if (rank == 0)
     {
-        for (int i = 1; i < size; i++)
+        for (int i = 0; i < N; i++)
         {
-            if (i != size - 1)
-                for (int j = 0; j < block; j++)
-                    MPI_Send(&A[i * block + j], N, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
-            else
-                for (int j = 0; j < block + remain; j++)
-                    MPI_Send(&A[i * block + j], N, MPI_FLOAT, i, 0, MPI_COMM_WORLD);
+            int tmp = i % size;
+            if (tmp != rank)
+                MPI_Send(&A[i], N, MPI_FLOAT, tmp, 0, MPI_COMM_WORLD);
         }
         LU_loop_OpenMP(rank, size);
-        for (int i = 1; i < size; i++)
+        for (int i = 0; i < N; i++)
         {
-            if (i != size - 1)
-                for (int j = 0; j < block; j++)
-                    MPI_Recv(&A[i * block + j], N, MPI_FLOAT, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            else
-                for (int j = 0; j < block + remain; j++)
-                    MPI_Recv(&A[i * block + j], N, MPI_FLOAT, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            int tmp = i % size;
+            if (tmp != rank)
+                MPI_Recv(&A[i], N, MPI_FLOAT, tmp, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
         }
     }
     else
     {
-        if (rank != size - 1)
-            for (int j = 0; j < block; j++)
-                MPI_Recv(&A[rank * block + j], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        else
-            for (int j = 0; j < block + remain; j++)
-                MPI_Recv(&A[rank * block + j], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        LU_loop_OpenMP(rank, size);
-        if (rank != size - 1)
-            for (int j = 0; j < block; j++)
-                MPI_Send(&A[rank * block + j], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
-        else
-            for (int j = 0; j < block + remain; j++)
-                MPI_Send(&A[rank * block + j], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
+        for (int i = rank; i < N; i += size)
+        {
+            MPI_Recv(&A[i], N, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        }
+        LU_loop(rank, size);
+        for (int i = rank; i < N; i += size)
+        {
+            MPI_Send(&A[i], N, MPI_FLOAT, 0, 1, MPI_COMM_WORLD);
+        }
     }
 }
 void LU_COL_loop(int rank, int size)
@@ -413,7 +388,6 @@ int main()
         QueryPerformanceCounter((LARGE_INTEGER*)&end);
         timer += (end - begin) * 1000.0 / freq;
     }
-    print();
     cout << "normal:  " << timer / epoch << "ms" << endl;
     MPI_Init(NULL, NULL);
     timer = 0;
@@ -425,7 +399,6 @@ int main()
         QueryPerformanceCounter((LARGE_INTEGER*)&end);
         timer += (end - begin) * 1000.0 / freq;
     }
-    print();
     cout << "Main_loop:  " << timer / epoch << "ms" << endl;
     timer = 0;
     for (int i = 0; i < epoch; i++)
@@ -436,7 +409,6 @@ int main()
         QueryPerformanceCounter((LARGE_INTEGER*)&end);
         timer += (end - begin) * 1000.0 / freq;
     }
-    print();
     cout << "Main_loop_OpenMP:  " << timer / epoch << "ms" << endl;
     timer = 0;
     for (int i = 0; i < epoch; i++)
@@ -447,7 +419,6 @@ int main()
         QueryPerformanceCounter((LARGE_INTEGER*)&end);
         timer += (end - begin) * 1000.0 / freq;
     }
-    print();
     cout << "Main_COL_loop:  " << timer / epoch << "ms" << endl;
     timer = 0;
     for (int i = 0; i < epoch; i++)
@@ -458,7 +429,6 @@ int main()
         QueryPerformanceCounter((LARGE_INTEGER*)&end);
         timer += (end - begin) * 1000.0 / freq;
     }
-    print();
     cout << "Main_COL_loop_OpenMP:  " << timer / epoch << "ms" << endl;
     MPI_Finalize();
     return 0;
