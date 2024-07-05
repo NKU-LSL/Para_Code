@@ -7,6 +7,13 @@
 #include <nmmintrin.h>
 #include <immintrin.h>
 using namespace std;
+//const int ColNum = 2362;
+//const int R_RowNum = 2362;
+//const int R_ColNum = (ColNum+31)/ 32;
+//const int E_RowNum = 453;
+//const int E_ColNum = (ColNum+31)/ 32;
+//unsigned int E[E_RowNum][E_ColNum]= {0},R[R_RowNum][R_ColNum]= {0};
+//int First[E_RowNum]= {0};
 const int ColNum = 2362;
 const int R_RowNum = 2362;
 const int R_ColNum = (ColNum+31)/ 32;
@@ -279,4 +286,6 @@ int main()
     cout<<endl  << timer / epoch << "ms" << endl;
     return 0;
 }
+
+
 

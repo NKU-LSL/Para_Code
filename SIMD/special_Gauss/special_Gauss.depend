@@ -14,3 +14,9 @@
 	<smmintrin.h>
 	<tmmintrin.h>
 
+1719587885 source:c:\users\86178\desktop\parallel\para_code\simd\special_gauss\main.cpp
+	<windows.h>
+	<iostream>
+	<sstream>
+	<fstream>
+
